@@ -16,8 +16,7 @@ class Board
     bomb_list = bomb_pos(bomb_count, size)
     grid.each_with_index do |row, r_idx|
       row.each_with_index do |cell, c_idx|
-        row[c_idx] = Tile.new(bomb_list.include?([r_idx, c_idx]), grid)
-        # debugger
+        row[c_idx] = Tile.new(bomb_list.include?([r_idx, c_idx]), self)
       end
     end
   end
@@ -34,11 +33,24 @@ class Board
   def show_board
     @board.each_with_index do |row, r_idx|
       r = []
-      row.each_with_index do |cell, c_idx|
-        r << cell.inspect
+      row.each_with_index do |tile, c_idx|
+        r << tile.inspect
       end
       p r
     end
+  end
+
+  def find_me(tile)
+    @board.each_with_index do |row, r_idx|
+      row.each_with_index do |cell, c_idx|
+        return [r_idx, c_idx] if cell == tile
+      end
+    end
+  end
+
+  def []=(pos, mark)
+    row, col = pos.first, pos.last
+    @board[row][col] = mark
   end
 
 end
