@@ -25,7 +25,7 @@ class Tile
 
   def reveal
     #reveal all neighbors
-    @revealed = true if self.bombed || self.neighbor_bomb_count > 0
+    @revealed = true # if self.bombed || self.neighbor_bomb_count > 0
     @board.visited << @board.find_me(self)
     if self.neighbor_bomb_count == 0
       array = self.neighbors
