@@ -3,20 +3,19 @@ require 'byebug'
 
 class Board
 
-  attr_reader :board
+  attr_reader :board, :bomb_list, :visited
 
-  def initialize
+  def initialize(bomb_count = 9, size = 9)
+    @bomb_list = bomb_pos(bomb_count, size)
     @board = populate
+    @visited = []
   end
 
   def populate # so we know the size of the board we're populating
     grid = Array.new(9) {Array.new (9)}
-    bomb_count = 9
-    size = grid.length
-    bomb_list = bomb_pos(bomb_count, size)
     grid.each_with_index do |row, r_idx|
       row.each_with_index do |cell, c_idx|
-        row[c_idx] = Tile.new(bomb_list.include?([r_idx, c_idx]), self)
+        row[c_idx] = Tile.new(@bomb_list.include?([r_idx, c_idx]), self)
       end
     end
   end
@@ -54,6 +53,3 @@ class Board
   end
 
 end
-
-game = Board.new
-game.show_board

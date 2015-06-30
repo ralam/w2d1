@@ -10,17 +10,31 @@ class Tile
     [-1, -1]
   ]
 
-  attr_reader :bombed
+  attr_reader :bombed, :revealed
 
   def initialize(bombed, board = [])
     @bombed = bombed
     @flagged = false
-    @revealed = true
+    @revealed = false
     @board = board
   end
 
+  def flag
+    @flagged = !@flagged
+  end
+
   def reveal
-    @revealed = true
+    #reveal all neighbors
+    @revealed = true if self.bombed || self.neighbor_bomb_count > 0
+    @board.visited << @board.find_me(self)
+    if self.neighbor_bomb_count == 0
+      array = self.neighbors
+      array.reject! { |location| @board.visited.include?(location) }
+      array.each do |pos|
+        @board.visited << pos
+        @board.board[pos.first][pos.last].reveal
+      end
+    end
   end
 
   def neighbors
@@ -46,10 +60,10 @@ class Tile
 
   def inspect
     count = self.neighbor_bomb_count
-    if !@revealed
-      "*"
-    elsif @flagged
+    if @flagged
       "F"
+    elsif !@revealed
+      "*"
     elsif @bombed
       "X"
     elsif count > 0
